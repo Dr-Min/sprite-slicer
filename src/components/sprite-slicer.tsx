@@ -4,6 +4,7 @@
 import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import JSZip from 'jszip';
+import Image from 'next/image';
 
 // 타입 정의
 interface JsonPreview {
@@ -43,6 +44,13 @@ interface JsonData {
   };
 }
 
+// HTMLImageElement 타입 정의 추가
+declare global {
+  interface Window {
+    Image: new (width?: number, height?: number) => HTMLImageElement;
+  }
+}
+
 const SpriteSlicer = () => {
   const [jsonData, setJsonData] = useState<JsonData | null>(null);
   const [imageFile, setImageFile] = useState<HTMLImageElement | null>(null);
@@ -78,12 +86,14 @@ const SpriteSlicer = () => {
       const zip = new JSZip();
       // 기본 폴더 생성 (파일 이름 기반)
       const folder = zip.folder(baseFileName);
+      
+      if (!folder) {
+        throw new Error('ZIP 폴더 생성 실패');
+      }
 
       // 각 스프라이트를 PNG 파일로 변환하여 ZIP에 추가
       slicedSprites.forEach((sprite, index) => {
-        // Base64 데이터 URL에서 실제 바이너리 데이터 추출
         const imageData = sprite.dataUrl.split(',')[1];
-        // 파일 이름 형식: 0.png, 1.png, 2.png, ...
         folder.file(`${index}.png`, imageData, {base64: true});
       });
 
@@ -127,49 +137,22 @@ const SpriteSlicer = () => {
     }
   };
 
-  // 이미지 파일 처리
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setBaseFileName(removeFileExtension(file.name));
-
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        const result = e.target?.result;
-        if (result) {
-          setImagePreview({
-            url: result.toString(),
-            name: file.name,
-            size: (file.size / 1024).toFixed(2) + ' KB'
-          });
-
-          const img = new Image();
-          img.onload = () => {
-            setImageFile(img);
-            if (jsonData) {
-              sliceSprites(img, jsonData);
-            }
-          };
-          img.src = result.toString();
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   // 스프라이트 슬라이싱 로직
-  const sliceSprites = (img: HTMLImageElement, json: JsonData) => {
+  const sliceSpritesCallback = React.useCallback((img: HTMLImageElement, json: JsonData) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
+    canvas.width = json.meta.size.w;
+    canvas.height = json.meta.size.h;
+    
     const sprites: Sprite[] = [];
 
     const frameEntries = Object.entries(json.frames);
     
-    frameEntries.forEach(([_, frameData], index) => {
+    frameEntries.forEach(([, frameData], index) => {
       const { x, y, w, h } = frameData.frame;
       
       const spriteCanvas = document.createElement('canvas');
@@ -192,13 +175,64 @@ const SpriteSlicer = () => {
     });
 
     setSlicedSprites(sprites);
+  }, [baseFileName]);
+
+  // 이미지 파일 처리 수정
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setBaseFileName(removeFileExtension(file.name));
+
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        const result = e.target?.result;
+        if (result) {
+          setImagePreview({
+            url: result.toString(),
+            name: file.name,
+            size: (file.size / 1024).toFixed(2) + ' KB'
+          });
+
+          const img = new window.Image(1, 1); // 초기 크기 지정
+          img.onload = () => {
+            setImageFile(img);
+            if (jsonData) {
+              sliceSpritesCallback(img, jsonData);
+            }
+          };
+          img.src = result.toString();
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
+
+  // 이미지 컴포넌트 수정
+  const ImagePreviewComponent = React.useMemo(() => {
+    if (!imagePreview?.url) return null;
+    
+    return (
+      <div className="mt-2 p-2 border rounded-lg">
+        <div
+          style={{
+            width: '100%',
+            height: '300px',
+            backgroundImage: `url(${imagePreview.url})`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            imageRendering: 'pixelated'
+          }}
+        />
+      </div>
+    );
+  }, [imagePreview?.url]);
 
   React.useEffect(() => {
     if (jsonData && imageFile) {
-      sliceSprites(imageFile, jsonData);
+      sliceSpritesCallback(imageFile, jsonData);
     }
-  }, [jsonData, imageFile]);
+  }, [jsonData, imageFile, sliceSpritesCallback]);
 
   return (
     <Card className="w-full max-w-4xl">
@@ -284,14 +318,7 @@ const SpriteSlicer = () => {
                     <p className="text-sm text-gray-600">{imagePreview.name}</p>
                     <p className="text-xs text-gray-500">크기: {imagePreview.size}</p>
                   </div>
-                  <div className="mt-2 p-2 border rounded-lg">
-                    <img 
-                      src={imagePreview.url} 
-                      alt="스프라이트 시트"
-                      className="w-full object-contain"
-                      style={{ imageRendering: 'pixelated' }}
-                    />
-                  </div>
+                  {ImagePreviewComponent}
                 </div>
               )}
             </div>
@@ -304,15 +331,17 @@ const SpriteSlicer = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {slicedSprites.map((sprite, index) => (
                   <div key={index} className="border rounded-lg p-2">
-                    <img
-                      src={sprite.dataUrl}
-                      alt={sprite.name}
-                      className="mx-auto"
+                    <div
                       style={{
                         width: sprite.width * 2,
                         height: sprite.height * 2,
+                        backgroundImage: `url(${sprite.dataUrl})`,
+                        backgroundSize: 'contain',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center',
                         imageRendering: 'pixelated'
                       }}
+                      className="mx-auto"
                     />
                     <p className="text-xs mt-2 truncate">{sprite.name}</p>
                   </div>
