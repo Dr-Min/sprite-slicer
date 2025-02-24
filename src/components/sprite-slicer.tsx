@@ -350,6 +350,30 @@ const SpriteSlicer = () => {
             </div>
           )}
         </div>
+
+        {/* Instructions section */}
+        <div className="mt-12 border-t pt-8">
+          <h3 className="text-xl font-semibold mb-4">How to Use</h3>
+          <div className="space-y-4 text-gray-600">
+            <p className="leading-relaxed">
+              This tool helps you slice sprite sheets into individual sprite frames. Simply:
+            </p>
+            <ol className="list-decimal list-inside space-y-2 ml-4">
+              <li>Export your sprite sheet from Aseprite as a PNG file</li>
+              <li>Export the JSON data (Hash format) from Aseprite</li>
+              <li>Upload both files to this tool</li>
+              <li>Download the automatically sliced sprite frames</li>
+            </ol>
+            <p className="mt-6 text-sm italic">
+              The tool uses Aseprite&apos;s JSON format to accurately slice your sprite sheet into individual frames.
+              Perfect for game development and pixel art animation projects.
+            </p>
+            <p className="mt-4 text-sm text-blue-600">
+              Happy game making! 🎮✨
+            </p>
+          </div>
+        </div>
+
         <canvas ref={canvasRef} className="hidden" />
       </CardContent>
     </Card>
