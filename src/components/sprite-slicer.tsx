@@ -221,7 +221,8 @@ const SpriteSlicer = () => {
             backgroundSize: 'contain',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
-            imageRendering: 'pixelated'
+            imageRendering: 'pixelated',
+            loading: 'lazy'
           }}
         />
       </div>

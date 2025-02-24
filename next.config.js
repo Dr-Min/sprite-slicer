@@ -16,6 +16,8 @@ const nextConfig = {
         hostname: '**',
       }
     ],
+    domains: ['sprite-slicer.vercel.app'],
+    formats: ['image/avif', 'image/webp'],
   },
   webpack: (config) => {
     config.module.rules.push({
@@ -24,6 +26,8 @@ const nextConfig = {
     });
     return config;
   },
+  compress: true,
+  poweredByHeader: false,
 }
 
 module.exports = nextConfig 

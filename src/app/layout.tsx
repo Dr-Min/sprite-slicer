@@ -13,22 +13,44 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Sprite Sheet Slicer',
-  description: 'Online tool to slice sprite sheets into individual sprite images. Easy-to-use web-based sprite sheet splitter for game developers and pixel artists.',
-  keywords: ['sprite sheet', 'sprite slicer', 'game development', 'pixel art', 'sprite splitter', 'sprite sheet tool', 'game assets'],
+  title: 'Sprite Sheet Slicer | Free Online Sprite Sheet Splitter Tool',
+  description: 'Free online tool to slice Aseprite sprite sheets into individual frames. Easy-to-use sprite sheet splitter for game developers, pixel artists, and indie game makers.',
+  keywords: [
+    'sprite sheet slicer',
+    'sprite sheet splitter',
+    'aseprite tool',
+    'game development',
+    'pixel art',
+    'sprite animation',
+    'game assets',
+    'indie game development',
+    'free sprite tool',
+    'online sprite editor'
+  ],
+  authors: [{ name: 'Your Name' }],
+  creator: 'Your Name',
+  publisher: 'Your Name',
   openGraph: {
-    title: 'Sprite Sheet Slicer - Split Sprite Sheets Online',
-    description: 'Free online tool to slice sprite sheets into individual sprite images. Perfect for game developers and pixel artists.',
+    title: 'Sprite Sheet Slicer - Free Online Sprite Sheet Splitter',
+    description: 'Easily slice Aseprite sprite sheets into individual frames. Perfect for game developers and pixel artists.',
     url: 'https://sprite-slicer.vercel.app',
     siteName: 'Sprite Sheet Slicer',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.png', // 추가 필요: 공유 시 표시될 이미지
+        width: 1200,
+        height: 630,
+        alt: 'Sprite Sheet Slicer Preview'
+      }
+    ]
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Sprite Sheet Slicer - Split Sprite Sheets Online',
-    description: 'Free online tool to slice sprite sheets into individual sprite images',
-    creator: '@your_twitter_handle', // 트위터 계정이 있다면 추가
+    description: 'Free online tool to slice sprite sheets into individual frames',
+    images: ['/twitter-image.png'], // 추가 필요: 트위터 공유용 이미지
   },
   robots: {
     index: true,
@@ -42,7 +64,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your_google_site_verification', // Google Search Console 인증 코드
+    google: 'your-google-verification-code', // Google Search Console에서 받은 코드
   },
 };
 
