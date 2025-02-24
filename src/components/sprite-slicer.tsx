@@ -237,17 +237,17 @@ const SpriteSlicer = () => {
   return (
     <Card className="w-full max-w-4xl">
       <CardHeader>
-        <CardTitle>스프라이트 시트 슬라이서</CardTitle>
+        <CardTitle>Sprite Sheet Slicer</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {/* 상단 버튼 영역 */}
+          {/* Top button area */}
           <div className="flex justify-end space-x-4">
             <button
               onClick={handleReset}
               className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 transition-colors"
             >
-              초기화
+              Reset
             </button>
             <button
               onClick={handleDownloadAll}
@@ -258,19 +258,19 @@ const SpriteSlicer = () => {
                   : 'bg-blue-500 hover:bg-blue-600'
               }`}
             >
-              {isDownloading ? '다운로드 중...' : '전체 다운로드'}
+              {isDownloading ? 'Downloading...' : 'Download All'}
             </button>
           </div>
 
-          {/* 파일 업로드 섹션 */}
+          {/* File upload section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* JSON 업로드 */}
+            {/* JSON upload */}
             <div className="border-2 border-dashed rounded-lg p-4">
               <label className="cursor-pointer flex flex-col items-center">
                 <div className="w-8 h-8 mb-2 bg-gray-200 rounded-full flex items-center justify-center">
                   <span className="text-xl">📄</span>
                 </div>
-                <span>JSON 파일 업로드</span>
+                <span>Upload JSON File</span>
                 <input
                   type="file"
                   accept=".json"
@@ -279,29 +279,29 @@ const SpriteSlicer = () => {
                 />
               </label>
               
-              {/* JSON 미리보기 */}
+              {/* JSON preview */}
               {jsonPreview && (
                 <div className="mt-4 p-3 bg-gray-100 rounded-lg">
-                  <p className="font-medium text-sm">업로드된 JSON:</p>
+                  <p className="font-medium text-sm">Uploaded JSON:</p>
                   <p className="text-sm text-gray-600">{jsonPreview.name}</p>
-                  <p className="text-xs text-gray-500">크기: {jsonPreview.size}</p>
+                  <p className="text-xs text-gray-500">Size: {jsonPreview.size}</p>
                   {jsonData && (
                     <div className="mt-2 text-xs">
-                      <p>프레임 수: {Object.keys(jsonData.frames).length}</p>
-                      <p>이미지 크기: {jsonData.meta.size.w}x{jsonData.meta.size.h}</p>
+                      <p>Frame count: {Object.keys(jsonData.frames).length}</p>
+                      <p>Image size: {jsonData.meta.size.w}x{jsonData.meta.size.h}</p>
                     </div>
                   )}
                 </div>
               )}
             </div>
 
-            {/* 이미지 업로드 */}
+            {/* Image upload */}
             <div className="border-2 border-dashed rounded-lg p-4">
               <label className="cursor-pointer flex flex-col items-center">
                 <div className="w-8 h-8 mb-2 bg-gray-200 rounded-full flex items-center justify-center">
                   <span className="text-xl">🖼️</span>
                 </div>
-                <span>이미지 파일 업로드</span>
+                <span>Upload Image File</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -310,13 +310,13 @@ const SpriteSlicer = () => {
                 />
               </label>
 
-              {/* 이미지 미리보기 */}
+              {/* Image preview */}
               {imagePreview && (
                 <div className="mt-4">
                   <div className="p-3 bg-gray-100 rounded-lg">
-                    <p className="font-medium text-sm">업로드된 이미지:</p>
+                    <p className="font-medium text-sm">Uploaded Image:</p>
                     <p className="text-sm text-gray-600">{imagePreview.name}</p>
-                    <p className="text-xs text-gray-500">크기: {imagePreview.size}</p>
+                    <p className="text-xs text-gray-500">Size: {imagePreview.size}</p>
                   </div>
                   {ImagePreviewComponent}
                 </div>
@@ -324,10 +324,10 @@ const SpriteSlicer = () => {
             </div>
           </div>
 
-          {/* 결과 표시 섹션 */}
+          {/* Results section */}
           {slicedSprites.length > 0 && (
             <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-4">슬라이싱된 스프라이트</h3>
+              <h3 className="text-lg font-semibold mb-4">Sliced Sprites</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {slicedSprites.map((sprite, index) => (
                   <div key={index} className="border rounded-lg p-2">
