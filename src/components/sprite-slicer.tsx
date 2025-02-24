@@ -221,9 +221,9 @@ const SpriteSlicer = () => {
             backgroundSize: 'contain',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
-            imageRendering: 'pixelated',
-            loading: 'lazy'
+            imageRendering: 'pixelated'
           }}
+          className="lazy-load"
         />
       </div>
     );
@@ -234,6 +234,26 @@ const SpriteSlicer = () => {
       sliceSpritesCallback(imageFile, jsonData);
     }
   }, [jsonData, imageFile, sliceSpritesCallback]);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('loaded');
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
+    document.querySelectorAll('.lazy-load').forEach((el) => {
+      observer.observe(el);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [slicedSprites, imagePreview]);
 
   return (
     <Card className="w-full max-w-4xl">
@@ -342,7 +362,7 @@ const SpriteSlicer = () => {
                         backgroundPosition: 'center',
                         imageRendering: 'pixelated'
                       }}
-                      className="mx-auto"
+                      className="mx-auto lazy-load"
                     />
                     <p className="text-xs mt-2 truncate">{sprite.name}</p>
                   </div>

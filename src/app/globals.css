@@ -74,3 +74,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+.lazy-load {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.lazy-load.loaded {
+  opacity: 1;
+}
